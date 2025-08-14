@@ -1,6 +1,6 @@
 {
   "name": "kuaukutsu/poc-queue-redis",
-  "description": "Proof of Concept: Task Queue by RabbitMQ",
+  "description": "Proof of Concept: Task Queue by Redis",
   "type": "library",
   "license": "MIT",
   "authors": [
