@@ -17,11 +17,11 @@
     "php": "^8.3",
     "ext-redis": "*",
     "amphp/redis": "^2.0",
-    "kuaukutsu/queue-core": "^0.1",
-    "php-di/php-di": "^7.0"
+    "kuaukutsu/queue-core": "^0.1"
   },
   "require-dev": {
     "ext-pcntl": "*",
+    "php-di/php-di": "^7.0",
     "phpstan/phpstan": "^2.0",
     "phpunit/phpunit": "^10.1",
     "rector/rector": "^2.0",

@@ -7,12 +7,12 @@ namespace kuaukutsu\poc\queue\redis;
 use Override;
 use Amp\Redis\RedisConfig;
 use Amp\Redis\RedisException;
-use DI\FactoryInterface;
-use kuaukutsu\poc\queue\redis\internal\FactoryProxy;
-use kuaukutsu\queue\core\BuilderInterface;
+use kuaukutsu\queue\core\handler\FactoryInterface;
 use kuaukutsu\queue\core\handler\HandlerInterface;
 use kuaukutsu\queue\core\handler\Pipeline;
 use kuaukutsu\queue\core\interceptor\InterceptorInterface;
+use kuaukutsu\queue\core\BuilderInterface;
+use kuaukutsu\poc\queue\redis\internal\FactoryProxy;
 
 use function Amp\Redis\createRedisClient;
 
@@ -33,7 +33,7 @@ final class Builder implements BuilderInterface
         ?HandlerInterface $handler = null,
     ) {
         $this->config = RedisConfig::fromUri('redis://');
-        $this->handler = $handler ?? new Pipeline(new FactoryProxy($factory));
+        $this->handler = $handler ?? new Pipeline($factory);
     }
 
     public function withConfig(RedisConfig $config): self
