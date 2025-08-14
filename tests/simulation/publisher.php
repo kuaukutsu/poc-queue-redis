@@ -1,14 +1,13 @@
-#!/usr/bin/env php
 <?php
 
 /**
  * Publisher.
- * @var QueueBuilder $builder bootstrap.php
+ * @var Builder $builder bootstrap.php
  */
 
 declare(strict_types=1);
 
-use kuaukutsu\poc\queue\redis\QueueBuilder;
+use kuaukutsu\poc\queue\redis\Builder;
 use kuaukutsu\poc\queue\redis\tests\stub\QueueHandlerStub;
 use kuaukutsu\poc\queue\redis\tests\stub\QueueSchemaStub;
 use kuaukutsu\queue\core\QueueContext;
@@ -36,16 +35,18 @@ $publisher->push($schema, $task);
 $publisher->push($schema, $task);
 $publisher->push($schema, $task);
 
-// confirm
-$publisher
-    ->push(
-        $schema,
-        new QueueTask(
-            target: QueueHandlerStub::class,
-            arguments: [
-                'id' => 21211,
-                'name' => 'test confirm',
-            ],
-        ),
-        QueueContext::make($schema)->withExternal(['requestId' => '123456789'])
-    );
+// range
+foreach (range(1, 100) as $item) {
+    $publisher
+        ->push(
+            $schema,
+            new QueueTask(
+                target: QueueHandlerStub::class,
+                arguments: [
+                    'id' => $item,
+                    'name' => 'test confirm',
+                ],
+            ),
+            QueueContext::make($schema)->withExternal(['requestId' => $item])
+        );
+}

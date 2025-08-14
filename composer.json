@@ -16,10 +16,8 @@
   "require": {
     "php": "^8.3",
     "ext-redis": "*",
-    "amphp/cache": "^2.0",
     "amphp/redis": "^2.0",
-    "amphp/sync": "^2.3",
-    "kuaukutsu/queue-core": "*",
+    "kuaukutsu/queue-core": "^0.1",
     "php-di/php-di": "^7.0"
   },
   "require-dev": {
