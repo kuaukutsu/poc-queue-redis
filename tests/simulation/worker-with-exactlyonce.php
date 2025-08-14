@@ -1,16 +1,15 @@
-#!/usr/bin/env php
 <?php
 
 /**
  * Consumer.
- * @var QueueBuilder $builder bootstrap.php
+ * @var Builder $builder bootstrap.php
  */
 
 declare(strict_types=1);
 
 use Amp\Redis\RedisCache;
 use Amp\Redis\Sync\RedisMutex;
-use kuaukutsu\poc\queue\redis\QueueBuilder;
+use kuaukutsu\poc\queue\redis\Builder;
 use kuaukutsu\queue\core\interceptor\ExactlyOnceInterceptor;
 use kuaukutsu\poc\queue\redis\tests\stub\QueueSchemaStub;
 

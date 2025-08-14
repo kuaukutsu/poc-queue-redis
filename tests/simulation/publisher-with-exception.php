@@ -1,14 +1,13 @@
-#!/usr/bin/env php
 <?php
 
 /**
  * Publisher, make task with exception.
- * @var QueueBuilder $builder bootstrap.php
+ * @var Builder $builder bootstrap.php
  */
 
 declare(strict_types=1);
 
-use kuaukutsu\poc\queue\redis\QueueBuilder;
+use kuaukutsu\poc\queue\redis\Builder;
 use kuaukutsu\poc\queue\redis\tests\stub\QueueSchemaStub;
 use kuaukutsu\queue\core\QueueTask;
 
@@ -20,7 +19,7 @@ $schema = QueueSchemaStub::from((string)argument('schema', 'low'));
 echo 'publisher run: ' . $schema->getRoutingKey() . PHP_EOL;
 
 $task = new QueueTask(
-    /** @phpstan-ignore argument.type */
+/** @phpstan-ignore argument.type */
     target: stdClass::class,
     arguments: [
         'id' => 1,

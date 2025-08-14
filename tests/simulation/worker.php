@@ -1,14 +1,13 @@
-#!/usr/bin/env php
 <?php
 
 /**
  * Consumer.
- * @var QueueBuilder $builder bootstrap.php
+ * @var Builder $builder bootstrap.php
  */
 
 declare(strict_types=1);
 
-use kuaukutsu\poc\queue\redis\QueueBuilder;
+use kuaukutsu\poc\queue\redis\Builder;
 use kuaukutsu\poc\queue\redis\tests\stub\QueueSchemaStub;
 
 use function Amp\trapSignal;

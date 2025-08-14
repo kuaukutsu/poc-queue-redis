@@ -20,6 +20,10 @@ final readonly class QueueHandlerStub implements TaskInterface
     #[Override]
     public function handle(QueueContext $context): void
     {
+        if (($this->id % 5) === 0) {
+            sleep(1);
+        }
+
         $this->writer->print($this->id, $this->name, $context);
     }
 }

@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace kuaukutsu\poc\queue\redis;
 
+use Override;
 use Amp\Redis\RedisConfig;
 use Amp\Redis\RedisException;
 use DI\FactoryInterface;
 use kuaukutsu\poc\queue\redis\internal\FactoryProxy;
+use kuaukutsu\queue\core\BuilderInterface;
 use kuaukutsu\queue\core\handler\HandlerInterface;
 use kuaukutsu\queue\core\handler\Pipeline;
 use kuaukutsu\queue\core\interceptor\InterceptorInterface;
@@ -17,7 +19,7 @@ use function Amp\Redis\createRedisClient;
 /**
  * @api
  */
-final class QueueBuilder
+final class Builder implements BuilderInterface
 {
     private RedisConfig $config;
 
@@ -41,6 +43,7 @@ final class QueueBuilder
         return $clone;
     }
 
+    #[Override]
     public function withInterceptors(InterceptorInterface ...$interceptor): self
     {
         $clone = clone $this;
@@ -48,11 +51,13 @@ final class QueueBuilder
         return $clone;
     }
 
+    #[Override]
     public function buildPublisher(): Publisher
     {
         return new Publisher(createRedisClient($this->config));
     }
 
+    #[Override]
     public function buildConsumer(): Consumer
     {
         return new Consumer(createRedisClient($this->config), $this->handler);
