@@ -12,7 +12,6 @@ use kuaukutsu\queue\core\handler\HandlerInterface;
 use kuaukutsu\queue\core\handler\Pipeline;
 use kuaukutsu\queue\core\interceptor\InterceptorInterface;
 use kuaukutsu\queue\core\BuilderInterface;
-use kuaukutsu\poc\queue\redis\internal\FactoryProxy;
 
 use function Amp\Redis\createRedisClient;
 
@@ -60,6 +59,6 @@ final class Builder implements BuilderInterface
     #[Override]
     public function buildConsumer(): Consumer
     {
-        return new Consumer(createRedisClient($this->config), $this->handler);
+        return new Consumer(createRedisClient($this->config), $this->handler, 3);
     }
 }

@@ -22,11 +22,13 @@ use kuaukutsu\queue\core\SchemaInterface;
  */
 final readonly class Consumer implements ConsumerInterface
 {
-    private const int HEARTBEAT = 5;
-
+    /**
+     * @param non-negative-int $timeoutBlocking
+     */
     public function __construct(
         private RedisClient $client,
         private HandlerInterface $handler,
+        private int $timeoutBlocking = 5,
     ) {
     }
 
@@ -42,6 +44,7 @@ final readonly class Consumer implements ConsumerInterface
             $this->makeFuture(...),
             $this->client->getList($schema->getRoutingKey()),
             $this->handler,
+            $this->timeoutBlocking,
             $catch,
         );
     }
@@ -49,17 +52,19 @@ final readonly class Consumer implements ConsumerInterface
     /**
      * @param callable(RedisList, int): Future $future
      * @param ?callable(string, Throwable): void $catch
+     * @param non-negative-int $timeoutBlocking
      * @throws QueueConsumeException
      */
     private function doConsume(
         callable $future,
         RedisList $command,
         HandlerInterface $handler,
+        int $timeoutBlocking,
         ?callable $catch,
     ): void {
         /** @phpstan-ignore while.alwaysTrue */
         while (true) {
-            $message = $future($command, self::HEARTBEAT)->await();
+            $message = $future($command, $timeoutBlocking)->await();
             if (is_string($message) === false || $message === '') {
                 continue;
             }
