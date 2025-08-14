@@ -3,7 +3,6 @@
   "description": "Proof of Concept: Task Queue by RabbitMQ",
   "type": "library",
   "license": "MIT",
-  "version": "0.0.1",
   "authors": [
     {
       "name": "Dmitriy Krivopalov",
@@ -20,8 +19,8 @@
     "amphp/cache": "^2.0",
     "amphp/redis": "^2.0",
     "amphp/sync": "^2.3",
-    "php-di/php-di": "^7.0",
-    "ramsey/uuid": "^4.9"
+    "kuaukutsu/queue-core": "*",
+    "php-di/php-di": "^7.0"
   },
   "require-dev": {
     "ext-pcntl": "*",
@@ -33,12 +32,6 @@
     "squizlabs/php_codesniffer": "^3.7",
     "vimeo/psalm": "^6.13"
   },
-  "repositories": [
-    {
-      "type": "composer",
-      "url": "https://asset-packagist.org"
-    }
-  ],
   "autoload": {
     "psr-4": {
       "kuaukutsu\\poc\\queue\\redis\\": "src"

@@ -11,7 +11,7 @@ declare(strict_types=1);
 use Amp\Redis\RedisCache;
 use Amp\Redis\Sync\RedisMutex;
 use kuaukutsu\poc\queue\redis\QueueBuilder;
-use kuaukutsu\poc\queue\redis\interceptor\ExactlyOnceInterceptor;
+use kuaukutsu\queue\core\interceptor\ExactlyOnceInterceptor;
 use kuaukutsu\poc\queue\redis\tests\stub\QueueSchemaStub;
 
 use function Amp\trapSignal;

@@ -6,9 +6,11 @@ namespace kuaukutsu\poc\queue\redis;
 
 use Amp\Redis\RedisConfig;
 use Amp\Redis\RedisException;
-use kuaukutsu\poc\queue\redis\handler\HandlerInterface;
-use kuaukutsu\poc\queue\redis\handler\Pipeline;
-use kuaukutsu\poc\queue\redis\interceptor\InterceptorInterface;
+use DI\FactoryInterface;
+use kuaukutsu\poc\queue\redis\internal\FactoryProxy;
+use kuaukutsu\queue\core\handler\HandlerInterface;
+use kuaukutsu\queue\core\handler\Pipeline;
+use kuaukutsu\queue\core\interceptor\InterceptorInterface;
 
 use function Amp\Redis\createRedisClient;
 
@@ -25,11 +27,11 @@ final class QueueBuilder
      * @throws RedisException
      */
     public function __construct(
-        \DI\FactoryInterface | FactoryInterface $factory,
+        FactoryInterface $factory,
         ?HandlerInterface $handler = null,
     ) {
         $this->config = RedisConfig::fromUri('redis://');
-        $this->handler = $handler ?? new Pipeline($factory);
+        $this->handler = $handler ?? new Pipeline(new FactoryProxy($factory));
     }
 
     public function withConfig(RedisConfig $config): self
@@ -46,13 +48,13 @@ final class QueueBuilder
         return $clone;
     }
 
-    public function buildPublisher(): QueuePublisher
+    public function buildPublisher(): Publisher
     {
-        return new QueuePublisher(createRedisClient($this->config));
+        return new Publisher(createRedisClient($this->config));
     }
 
-    public function buildConsumer(): QueueConsumer
+    public function buildConsumer(): Consumer
     {
-        return new QueueConsumer(createRedisClient($this->config), $this->handler);
+        return new Consumer(createRedisClient($this->config), $this->handler);
     }
 }
