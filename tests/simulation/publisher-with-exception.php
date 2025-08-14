@@ -9,8 +9,8 @@
 declare(strict_types=1);
 
 use kuaukutsu\poc\queue\redis\QueueBuilder;
-use kuaukutsu\poc\queue\redis\QueueTask;
 use kuaukutsu\poc\queue\redis\tests\stub\QueueSchemaStub;
+use kuaukutsu\queue\core\QueueTask;
 
 use function kuaukutsu\poc\queue\redis\tests\argument;
 

@@ -4,19 +4,23 @@ declare(strict_types=1);
 
 namespace kuaukutsu\poc\queue\redis;
 
+use Override;
 use Throwable;
 use Amp\DeferredFuture;
 use Amp\Future;
 use Amp\Redis\Command\RedisList;
 use Amp\Redis\RedisClient;
 use Revolt\EventLoop;
-use kuaukutsu\poc\queue\redis\exception\QueueConsumeException;
-use kuaukutsu\poc\queue\redis\handler\HandlerInterface;
+use kuaukutsu\queue\core\exception\QueueConsumeException;
+use kuaukutsu\queue\core\handler\HandlerInterface;
+use kuaukutsu\queue\core\ConsumerInterface;
+use kuaukutsu\queue\core\QueueMessage;
+use kuaukutsu\queue\core\SchemaInterface;
 
 /**
  * @api
  */
-final readonly class QueueConsumer
+final readonly class Consumer implements ConsumerInterface
 {
     private const int HEARTBEAT = 5;
 
@@ -30,7 +34,8 @@ final readonly class QueueConsumer
      * @param ?callable(string, Throwable): void $catch
      * @throws QueueConsumeException
      */
-    public function consume(QueueSchemaInterface $schema, ?callable $catch = null): void
+    #[Override]
+    public function consume(SchemaInterface $schema, ?callable $catch = null): void
     {
         EventLoop::queue(
             $this->doConsume(...),

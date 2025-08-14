@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace kuaukutsu\poc\queue\redis\tests\stub;
 
 use Override;
-use kuaukutsu\poc\queue\redis\QueueContext;
-use kuaukutsu\poc\queue\redis\QueueHandlerInterface;
+use kuaukutsu\queue\core\QueueContext;
+use kuaukutsu\queue\core\TaskInterface;
 
-final readonly class QueueHandlerStub implements QueueHandlerInterface
+final readonly class QueueHandlerStub implements TaskInterface
 {
     public function __construct(
         public int $id,

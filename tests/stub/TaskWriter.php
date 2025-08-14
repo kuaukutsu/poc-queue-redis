@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace kuaukutsu\poc\queue\redis\tests\stub;
 
-use kuaukutsu\poc\queue\redis\QueueContext;
+use kuaukutsu\queue\core\QueueContext;
 
 final readonly class TaskWriter
 {
