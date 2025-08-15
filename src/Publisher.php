@@ -36,9 +36,37 @@ final readonly class Publisher implements PublisherInterface
                 QueueMessage::makeMessage($task, $context ?? QueueContext::make($schema))
             );
         } catch (Throwable $exception) {
-            throw new QueuePublishException($task, $schema, $exception);
+            throw new QueuePublishException($schema, $exception);
         }
 
         return $task->getUuid();
+    }
+
+    /**
+     * @param list<QueueTask> $taskBatch
+     * @return list<non-empty-string>
+     * @throws QueuePublishException
+     */
+    #[Override]
+    public function pushBatch(SchemaInterface $schema, array $taskBatch, ?QueueContext $context = null): array
+    {
+        if ($taskBatch === []) {
+            return [];
+        }
+
+        $command = $this->client->getList($schema->getRoutingKey());
+
+        $messageList = [];
+        foreach ($taskBatch as $task) {
+            $messageList[$task->getUuid()] = QueueMessage::makeMessage($task, $context ?? QueueContext::make($schema));
+        }
+
+        try {
+            $command->pushTail(array_shift($messageList), ...$messageList);
+        } catch (Throwable $exception) {
+            throw new QueuePublishException($schema, $exception);
+        }
+
+        return array_keys($messageList);
     }
 }
