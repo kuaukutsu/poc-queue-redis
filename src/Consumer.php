@@ -87,7 +87,7 @@ final readonly class Consumer implements ConsumerInterface
     private function makeFuture(RedisList $command, int $timeout = 0): Future
     {
         $future = new DeferredFuture();
-        $value = $command->popTailBlocking($timeout);
+        $value = $command->popHeadBlocking($timeout);
         if ($future->isComplete() === false) {
             $future->complete($value);
         }

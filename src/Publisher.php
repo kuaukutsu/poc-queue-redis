@@ -32,7 +32,7 @@ final readonly class Publisher implements PublisherInterface
         $command = $this->client->getList($schema->getRoutingKey());
 
         try {
-            $command->pushHead(
+            $command->pushTail(
                 QueueMessage::makeMessage($task, $context ?? QueueContext::make($schema))
             );
         } catch (Throwable $exception) {
