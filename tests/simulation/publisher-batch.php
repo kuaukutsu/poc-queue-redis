@@ -26,7 +26,7 @@ foreach (range(1, 100) as $item) {
         target: QueueHandlerStub::class,
         arguments: [
             'id' => $item,
-            'name' => 'test confirm',
+            'name' => 'test batch',
         ],
     );
 }
