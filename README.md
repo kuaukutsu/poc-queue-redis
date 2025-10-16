@@ -6,7 +6,7 @@
 [![Psalm Level](https://shepherd.dev/github/kuaukutsu/poc-queue-redis/level.svg)](https://shepherd.dev/github/kuaukutsu/poc-queue-redis)
 [![Psalm Type Coverage](https://shepherd.dev/github/kuaukutsu/poc-queue-redis/coverage.svg)](https://shepherd.dev/github/kuaukutsu/poc-queue-redis)
 
-Очередь: **Redis**  
+Очередь: **Redis** / **ValKey**  
 
 Драйвер для работы: **amphp/redis**, this package provides non-blocking access to Redis instances.
 
