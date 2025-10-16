@@ -12,5 +12,5 @@ require dirname(__DIR__) . '/vendor/autoload.php';
 $container = new Container();
 $builder = (new Builder(new FactoryProxy($container)))
     ->withConfig(
-        RedisConfig::fromUri('redis://redis:6379')
+        RedisConfig::fromUri('tcp://redis:6379')
     );

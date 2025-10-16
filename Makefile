@@ -35,27 +35,27 @@ check:
 		composer check
 
 psalm: ## psalm
-	docker run --init -it --rm -v "$$(pwd):/app" -u ${USER} -w /app \
+	docker run --init -it --rm -u ${USER} -v "$$(pwd):/app" -w /app \
 		ghcr.io/kuaukutsu/php:${PHP_VERSION}-cli \
 		./vendor/bin/psalm --php-version=${PHP_VERSION} --no-cache
 
 phpstan: ## phpstan
-	docker run --init -it --rm -v "$$(pwd):/app" -u ${USER} -w /app \
+	docker run --init -it --rm -u ${USER} -v "$$(pwd):/app" -w /app \
 		ghcr.io/kuaukutsu/php:${PHP_VERSION}-cli \
 		./vendor/bin/phpstan analyse -c phpstan.neon
 
 phpcs: ## php code snifferphp: detect violations of a defined coding standard
-	docker run --init -it --rm -v "$$(pwd):/app" -u ${USER} -w /app \
+	docker run --init -it --rm -u ${USER} -v "$$(pwd):/app" -w /app \
 		ghcr.io/kuaukutsu/php:${PHP_VERSION}-cli \
 		./vendor/bin/phpcs
 
 phpcbf: ## php code sniffer: automatically correct
-	docker run --init -it --rm -v "$$(pwd):/app" -u ${USER} -w /app \
+	docker run --init -it --rm -u ${USER} -v "$$(pwd):/app" -w /app \
 		ghcr.io/kuaukutsu/php:${PHP_VERSION}-cli \
 		./vendor/bin/phpcbf
 
 rector: ## rector
-	docker run --init -it --rm -v "$$(pwd):/app" -u ${USER} -w /app \
+	docker run --init -it --rm -u ${USER} -v "$$(pwd):/app" -w /app \
 		ghcr.io/kuaukutsu/php:${PHP_VERSION}-cli \
 		./vendor/bin/rector
 
@@ -76,29 +76,34 @@ down: stop
 build:
 	- USER=$(USER) docker compose -f ./docker-compose.yml build cli
 	- USER=$(USER) docker compose -f ./docker-compose.yml build redis
+	- USER=$(USER) docker compose -f ./docker-compose.yml build valkey
+	- USER=$(USER) docker compose -f ./docker-compose.yml build worker
 
 remove: down _image_remove _container_remove _volume_remove
 
 app:
-	USER=$(USER) docker compose -f ./docker-compose.yml run --rm -u $(USER) -w /app/src cli sh
+	USER=$(USER) docker compose -f ./docker-compose.yml run --rm -u $(USER) -w /src cli sh
 
 publisher:
-	USER=$(USER) docker compose -f ./docker-compose.yml run --rm -u $(USER) -w /app/tests/simulation cli \
+	USER=$(USER) docker compose -f ./docker-compose.yml run --rm -u $(USER) -w /tests/simulation cli \
 		php publisher.php --schema=high
 
 worker:
-	USER=$(USER) docker compose -f ./docker-compose.yml run --rm -u $(USER) -w /app/tests/simulation cli \
+	USER=$(USER) docker compose -f ./docker-compose.yml run --rm -u $(USER) -w /tests/simulation cli \
 		php worker-with-exactlyonce.php --schema=high
 
 _image_remove:
 	docker image rm -f \
 		queue_redis-cli \
-		queue_redis-redis
+		queue_redis-redis \
+		queue_redis-valkey
 
 _container_remove:
 	docker rm -f \
-		queue_redis_redis
+		queue_redis_redis \
+		queue_redis_valkey
 
 _volume_remove:
 	docker volume rm -f \
-		queue_redis_vredis
+		queue_redis_vredis \
+		queue_redis_vvalkey

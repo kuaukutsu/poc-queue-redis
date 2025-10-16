@@ -1,13 +1,19 @@
 x-default-logging: &default-logging
-  driver: json-file
+  driver: local
   options:
     max-size: "5m"
     max-file: "3"
 
 x-service-volume: &service-volume
   - type: bind
-    source: .
-    target: /app
+    source: ./src
+    target: /src
+  - type: bind
+    source: ./tests
+    target: /tests
+  - type: bind
+    source: ./vendor
+    target: /vendor
 
 name: queue_redis
 services:
@@ -19,7 +25,7 @@ services:
       target: app_devel
       args:
         UID: ${USER:-1} # ID:1 daemon, support: linux, mac
-        WORKDIR: "/app/src"
+        WORKDIR: "/src"
     env_file:
       - .docker/base.env
     volumes: *service-volume
@@ -32,7 +38,7 @@ services:
       target: app_worker
       args:
         UID: ${USER:-1} # ID:1 daemon, support: linux, mac
-        WORKDIR: "/app/tests/simulation"
+        WORKDIR: "/tests/simulation"
     deploy:
       mode: replicated
       replicas: 4
@@ -84,10 +90,46 @@ services:
       - vredis:/data
     logging: *default-logging
 
+  valkey:
+    container_name: queue_redis_valkey
+    profiles: [ "serve" ]
+    restart: on-failure
+    build:
+      context: .docker/valkey
+      args:
+        UID: ${USER:-1} # ID:1 daemon, support: linux, mac
+    cap_drop:
+      - NET_ADMIN
+      - SYS_ADMIN
+    deploy:
+      resources:
+        limits:
+          cpus: '0.2'
+          memory: 256M
+        reservations:
+          cpus: '0.1'
+          memory: 64M
+    configs:
+      - source: valkey
+        target: /usr/local/etc/valkey/valkey.conf
+    command: [ "redis-server", "/usr/local/etc/valkey/valkey.conf" ]
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - vvalkey:/data
+    logging: *default-logging
+
 configs:
   redis:
     name: conf_${VERSION:-1}
     file: .docker/redis/redis.conf
+  valkey:
+    name: conf_${VERSION:-1}
+    file: .docker/valkey/valkey.conf
 
 volumes:
   vredis:
+  vvalkey:

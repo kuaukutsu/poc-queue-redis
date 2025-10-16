@@ -31,6 +31,7 @@ final class Builder implements BuilderInterface
         FactoryInterface $factory,
         ?HandlerInterface $handler = null,
     ) {
+        // redis://user:secret@localhost:6379/0
         $this->config = RedisConfig::fromUri('redis://');
         $this->handler = $handler ?? new Pipeline($factory);
     }
