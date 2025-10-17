@@ -22,7 +22,6 @@ require dirname(__DIR__) . '/bootstrap.php';
 $schema = QueueSchemaStub::from((string)argument('schema', 'low'));
 echo 'consumer run: ' . $schema->getRoutingKey() . PHP_EOL;
 
-
 $redis = createRedisClient('redis://redis:6379');
 $builder
     ->withInterceptors(

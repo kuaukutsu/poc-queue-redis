@@ -11,6 +11,8 @@ enum QueueSchemaStub: string implements SchemaInterface
 {
     case low = 'low';
     case high = 'high';
+    case redis = 'redis';
+    case valkey = 'valkey';
 
     #[Override]
     public function getRoutingKey(): string

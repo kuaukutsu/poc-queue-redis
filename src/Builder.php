@@ -32,7 +32,7 @@ final class Builder implements BuilderInterface
         ?HandlerInterface $handler = null,
     ) {
         // redis://user:secret@localhost:6379/0
-        $this->config = RedisConfig::fromUri('redis://');
+        $this->config = RedisConfig::fromUri('redis://localhost:6379');
         $this->handler = $handler ?? new Pipeline($factory);
     }
 
