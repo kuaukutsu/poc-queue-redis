@@ -19,6 +19,7 @@ which can be used to add functionality to the application without modifying the 
 composer require kuaukutsu/poc-queue-redis
 ```
 
+Benchmark (with igbinary)
 ```
 PHPBench (1.4.1) running benchmarks...
 with configuration file: /benchmark/phpbench.json
@@ -26,48 +27,21 @@ with PHP version 8.3.22, xdebug ✔, opcache ✔
 
 \kuaukutsu\poc\queue\redis\benchmarks\PublisherRedisBench
 
-    benchAsWhile............................I4 - Mo34.294ms (±6.77%)
-    benchAsBatch............................I4 - Mo5.929ms (±6.25%)
+    benchAsWhile............................I4 - Mo27.183ms (±1.60%)
+    benchAsBatch............................I4 - Mo5.440ms (±3.44%)
 
 \kuaukutsu\poc\queue\redis\benchmarks\PublisherValkeyBench
 
-    benchAsWhile............................I4 - Mo33.419ms (±23.42%)
-    benchAsBatch............................I4 - Mo6.182ms (±2.13%)
+    benchAsWhile............................I4 - Mo27.844ms (±3.44%)
+    benchAsBatch............................I4 - Mo5.479ms (±2.18%)
 
 Subjects: 4, Assertions: 0, Failures: 0, Errors: 0
-+----------------------+--------------+-----+------+-----+----------+----------+---------+
-| benchmark            | subject      | set | revs | its | mem_peak | mode     | rstdev  |
-+----------------------+--------------+-----+------+-----+----------+----------+---------+
-| PublisherRedisBench  | benchAsWhile |     | 10   | 5   | 1.979mb  | 34.294ms | ±6.77%  |
-| PublisherRedisBench  | benchAsBatch |     | 10   | 5   | 2.268mb  | 5.929ms  | ±6.25%  |
-| PublisherValkeyBench | benchAsWhile |     | 10   | 5   | 1.979mb  | 33.419ms | ±23.42% |
-| PublisherValkeyBench | benchAsBatch |     | 10   | 5   | 2.268mb  | 6.182ms  | ±2.13%  |
-+----------------------+--------------+-----+------+-----+----------+----------+---------+
-```
-
-With igbinary enabled:
-```
-PHPBench (1.4.1) running benchmarks...
-with configuration file: /benchmark/phpbench.json
-with PHP version 8.3.22, xdebug ✔, opcache ✔
-
-\kuaukutsu\poc\queue\redis\benchmarks\PublisherRedisBench
-
-    benchAsWhile............................I4 - Mo32.377ms (±0.64%)
-    benchAsBatch............................I4 - Mo5.677ms (±2.83%)
-
-\kuaukutsu\poc\queue\redis\benchmarks\PublisherValkeyBench
-
-    benchAsWhile............................I4 - Mo33.506ms (±12.60%)
-    benchAsBatch............................I4 - Mo5.903ms (±2.74%)
-
-Subjects: 4, Assertions: 0, Failures: 0, Errors: 0
-+----------------------+--------------+-----+------+-----+----------+----------+---------+
-| benchmark            | subject      | set | revs | its | mem_peak | mode     | rstdev  |
-+----------------------+--------------+-----+------+-----+----------+----------+---------+
-| PublisherRedisBench  | benchAsWhile |     | 10   | 5   | 1.979mb  | 32.377ms | ±0.64%  |
-| PublisherRedisBench  | benchAsBatch |     | 10   | 5   | 2.206mb  | 5.677ms  | ±2.83%  |
-| PublisherValkeyBench | benchAsWhile |     | 10   | 5   | 1.979mb  | 33.506ms | ±12.60% |
-| PublisherValkeyBench | benchAsBatch |     | 10   | 5   | 2.206mb  | 5.903ms  | ±2.74%  |
-+----------------------+--------------+-----+------+-----+----------+----------+---------+
++----------------------+--------------+-----+------+-----+----------+----------+--------+
+| benchmark            | subject      | set | revs | its | mem_peak | mode     | rstdev |
++----------------------+--------------+-----+------+-----+----------+----------+--------+
+| PublisherRedisBench  | benchAsWhile |     | 10   | 5   | 1.980mb  | 27.183ms | ±1.60% |
+| PublisherRedisBench  | benchAsBatch |     | 10   | 5   | 2.214mb  | 5.440ms  | ±3.44% |
+| PublisherValkeyBench | benchAsWhile |     | 10   | 5   | 1.980mb  | 27.844ms | ±3.44% |
+| PublisherValkeyBench | benchAsBatch |     | 10   | 5   | 2.214mb  | 5.479ms  | ±2.18% |
++----------------------+--------------+-----+------+-----+----------+----------+--------+
 ```

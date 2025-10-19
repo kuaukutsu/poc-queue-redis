@@ -6,6 +6,8 @@ namespace kuaukutsu\poc\queue\redis;
 
 use Override;
 use Throwable;
+use WeakMap;
+use Amp\Redis\Command\RedisList;
 use Amp\Redis\RedisClient;
 use kuaukutsu\queue\core\exception\QueuePublishException;
 use kuaukutsu\queue\core\PublisherInterface;
@@ -17,10 +19,13 @@ use kuaukutsu\queue\core\SchemaInterface;
 /**
  * @api
  */
-final readonly class Publisher implements PublisherInterface
+final class Publisher implements PublisherInterface
 {
-    public function __construct(private RedisClient $client)
+    private WeakMap $map;
+
+    public function __construct(private readonly RedisClient $client)
     {
+        $this->map = new WeakMap();
     }
 
     /**
@@ -29,10 +34,8 @@ final readonly class Publisher implements PublisherInterface
     #[Override]
     public function push(SchemaInterface $schema, QueueTask $task, ?QueueContext $context = null): string
     {
-        $command = $this->client->getList($schema->getRoutingKey());
-
         try {
-            $command->pushTail(
+            $this->makeCommand($schema)->pushTail(
                 QueueMessage::makeMessage($task, $context ?? QueueContext::make($schema))
             );
         } catch (Throwable $exception) {
@@ -54,19 +57,25 @@ final readonly class Publisher implements PublisherInterface
             return [];
         }
 
-        $command = $this->client->getList($schema->getRoutingKey());
-
         $messageList = [];
         foreach ($taskBatch as $task) {
             $messageList[$task->getUuid()] = QueueMessage::makeMessage($task, $context ?? QueueContext::make($schema));
         }
 
         try {
-            $command->pushTail(array_shift($messageList), ...$messageList);
+            $this->makeCommand($schema)->pushTail(array_shift($messageList), ...$messageList);
         } catch (Throwable $exception) {
             throw new QueuePublishException($schema, $exception);
         }
 
         return array_keys($messageList);
+    }
+
+    private function makeCommand(SchemaInterface $schema): RedisList
+    {
+        /**
+         * @var RedisList
+         */
+        return $this->map[$schema] ??= $this->client->getList($schema->getRoutingKey());
     }
 }
