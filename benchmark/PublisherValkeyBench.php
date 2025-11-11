@@ -60,7 +60,7 @@ final class PublisherValkeyBench
 
     public function benchAsBatch(): void
     {
-        $schema = QueueSchemaStub::redis;
+        $schema = QueueSchemaStub::valkey;
 
         $batch = [];
         foreach (range(1, 100) as $item) {

@@ -104,6 +104,7 @@ _image_remove:
 _container_remove:
 	docker rm -f \
 		queue_redis_redis \
+		queue_redis_inside \
 		queue_redis_valkey
 
 _volume_remove:
