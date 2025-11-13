@@ -6,7 +6,6 @@ namespace kuaukutsu\poc\queue\redis;
 
 use Override;
 use Throwable;
-use Amp\DeferredFuture;
 use Amp\Future;
 use Amp\Redis\Command\RedisList;
 use Amp\Redis\RedisClient;
@@ -16,6 +15,8 @@ use kuaukutsu\queue\core\handler\HandlerInterface;
 use kuaukutsu\queue\core\ConsumerInterface;
 use kuaukutsu\queue\core\QueueMessage;
 use kuaukutsu\queue\core\SchemaInterface;
+
+use function Amp\async;
 
 /**
  * @api
@@ -86,12 +87,8 @@ final readonly class Consumer implements ConsumerInterface
      */
     private function makeFuture(RedisList $command, int $timeout = 0): Future
     {
-        $future = new DeferredFuture();
-        $value = $command->popHeadBlocking($timeout);
-        if ($future->isComplete() === false) {
-            $future->complete($value);
-        }
-
-        return $future->getFuture();
+        return async(function () use ($command, $timeout) {
+            return $command->popHeadBlocking($timeout);
+        });
     }
 }
