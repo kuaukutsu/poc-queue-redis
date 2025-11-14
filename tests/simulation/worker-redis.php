@@ -23,8 +23,8 @@ $builder = (new Builder(new FactoryProxy(new Container())))
     );
 
 $builder
-    ->buildConsumer()
-    ->consume($schema);
+    ->buildConsumer($schema)
+    ->consume();
 
 /** @noinspection PhpUnhandledExceptionInspection */
 trapSignal([SIGTERM, SIGINT]);

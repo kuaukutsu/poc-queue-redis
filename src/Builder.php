@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace kuaukutsu\poc\queue\redis;
 
+use kuaukutsu\queue\core\SchemaInterface;
 use Override;
 use Amp\Redis\RedisConfig;
 use Amp\Redis\RedisException;
@@ -58,8 +59,8 @@ final class Builder implements BuilderInterface
     }
 
     #[Override]
-    public function buildConsumer(): Consumer
+    public function buildConsumer(SchemaInterface $schema): Consumer
     {
-        return new Consumer(createRedisClient($this->config), $this->handler, 3);
+        return new Consumer(createRedisClient($this->config), $schema, $this->handler, 3);
     }
 }

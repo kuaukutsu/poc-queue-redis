@@ -23,14 +23,18 @@ use function Amp\async;
  */
 final readonly class Consumer implements ConsumerInterface
 {
+    private RedisList $command;
+
     /**
      * @param non-negative-int $timeoutBlocking
      */
     public function __construct(
-        private RedisClient $client,
+        RedisClient $client,
+        SchemaInterface $schema,
         private HandlerInterface $handler,
         private int $timeoutBlocking = 5,
     ) {
+        $this->command = $client->getList($schema->getRoutingKey());
     }
 
     /**
@@ -38,12 +42,12 @@ final readonly class Consumer implements ConsumerInterface
      * @throws QueueConsumeException
      */
     #[Override]
-    public function consume(SchemaInterface $schema, ?callable $catch = null): void
+    public function consume(?callable $catch = null): void
     {
         EventLoop::queue(
             $this->doConsume(...),
             $this->makeFuture(...),
-            $this->client->getList($schema->getRoutingKey()),
+            $this->command,
             $this->handler,
             $this->timeoutBlocking,
             $catch,
