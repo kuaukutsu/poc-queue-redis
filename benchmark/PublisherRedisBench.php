@@ -7,6 +7,8 @@ namespace kuaukutsu\poc\queue\redis\benchmarks;
 use Amp\Redis\RedisConfig;
 use Amp\Redis\RedisException;
 use DI\Container;
+use PhpBench\Attributes\Iterations;
+use PhpBench\Attributes\Revs;
 use kuaukutsu\poc\queue\redis\Builder;
 use kuaukutsu\poc\queue\redis\internal\FactoryProxy;
 use kuaukutsu\poc\queue\redis\tests\stub\QueueHandlerStub;
@@ -14,8 +16,6 @@ use kuaukutsu\poc\queue\redis\tests\stub\QueueSchemaStub;
 use kuaukutsu\queue\core\PublisherInterface;
 use kuaukutsu\queue\core\QueueContext;
 use kuaukutsu\queue\core\QueueTask;
-use PhpBench\Attributes\Iterations;
-use PhpBench\Attributes\Revs;
 
 #[Revs(10)]
 #[Iterations(5)]
@@ -53,7 +53,6 @@ final class PublisherRedisBench
                         ],
                     ),
                     QueueContext::make($schema)
-                        ->withExternal(['requestId' => $item])
                 );
         }
     }
@@ -78,7 +77,6 @@ final class PublisherRedisBench
                 $schema,
                 $batch,
                 QueueContext::make($schema)
-                    ->withExternal(['requestId' => 100])
             );
     }
 }

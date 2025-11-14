@@ -19,8 +19,8 @@ $schema = QueueSchemaStub::from((string)argument('schema', 'low'));
 echo 'consumer run: ' . $schema->getRoutingKey() . PHP_EOL;
 
 $builder
-    ->buildConsumer()
-    ->consume($schema);
+    ->buildConsumer($schema)
+    ->consume();
 
 /** @noinspection PhpUnhandledExceptionInspection */
 trapSignal([SIGTERM, SIGINT]);

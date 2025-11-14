@@ -23,9 +23,8 @@ $builder
     ->withInterceptors(
         new TryCatchInterceptor(),
     )
-    ->buildConsumer()
+    ->buildConsumer($schema)
     ->consume(
-        $schema,
         static function (string $message, Throwable $exception): void {
             echo sprintf("data: %s\nerror: %s", $message, $exception->getMessage());
         }
