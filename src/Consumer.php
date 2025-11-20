@@ -7,6 +7,7 @@ namespace kuaukutsu\poc\queue\redis;
 use Override;
 use Throwable;
 use Amp\Future;
+use Amp\TimeoutCancellation;
 use Amp\Redis\Command\RedisList;
 use Amp\Redis\RedisClient;
 use Revolt\EventLoop;
@@ -75,9 +76,25 @@ final readonly class Consumer implements ConsumerInterface
             }
 
             try {
-                $handler->handle(
-                    QueueMessage::makeFromMessage($message)
-                );
+                $queueMessage = QueueMessage::makeFromMessage($message);
+            } catch (Throwable $exception) {
+                if (is_callable($catch)) {
+                    $catch($message, $exception);
+                }
+
+                continue;
+            }
+
+            $cancelation = null;
+            if ($queueMessage->context->timeout > 0) {
+                $cancelation = new TimeoutCancellation($queueMessage->context->timeout);
+            }
+
+            try {
+                async(
+                    $handler->handle(...),
+                    $queueMessage,
+                )->await($cancelation);
             } catch (Throwable $exception) {
                 if (is_callable($catch)) {
                     $catch($message, $exception);
@@ -91,8 +108,12 @@ final readonly class Consumer implements ConsumerInterface
      */
     private function makeFuture(RedisList $command, int $timeout = 0): Future
     {
-        return async(function () use ($command, $timeout) {
-            return $command->popHeadBlocking($timeout);
-        });
+        return async(
+            static function (RedisList $command, int $timeout) {
+                return $command->popHeadBlocking($timeout);
+            },
+            $command,
+            $timeout,
+        );
     }
 }

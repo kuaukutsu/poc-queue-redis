@@ -7,10 +7,8 @@
 
 declare(strict_types=1);
 
-use Amp\Redis\RedisCache;
-use Amp\Redis\Sync\RedisMutex;
 use kuaukutsu\poc\queue\redis\Builder;
-use kuaukutsu\queue\core\interceptor\ExactlyOnceInterceptor;
+use kuaukutsu\poc\queue\redis\interceptor\ExactlyOnceInterceptor;
 use kuaukutsu\poc\queue\redis\tests\stub\QueueSchemaStub;
 
 use function Amp\trapSignal;
@@ -22,13 +20,9 @@ require dirname(__DIR__) . '/bootstrap.php';
 $schema = QueueSchemaStub::from((string)argument('schema', 'low'));
 echo 'consumer run: ' . $schema->getRoutingKey() . PHP_EOL;
 
-$redis = createRedisClient('redis://redis:6379');
 $builder
     ->withInterceptors(
-        new ExactlyOnceInterceptor(
-            new RedisCache($redis),
-            new RedisMutex($redis),
-        ),
+        new ExactlyOnceInterceptor(createRedisClient('redis://redis:6379')),
     )
     ->buildConsumer($schema)
     ->consume();
