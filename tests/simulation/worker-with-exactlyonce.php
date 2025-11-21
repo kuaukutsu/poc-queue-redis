@@ -7,6 +7,7 @@
 
 declare(strict_types=1);
 
+use kuaukutsu\queue\core\interceptor\ArgumentsVerifyInterceptor;
 use kuaukutsu\poc\queue\redis\Builder;
 use kuaukutsu\poc\queue\redis\interceptor\ExactlyOnceInterceptor;
 use kuaukutsu\poc\queue\redis\tests\stub\QueueSchemaStub;
@@ -20,13 +21,16 @@ require dirname(__DIR__) . '/bootstrap.php';
 $schema = QueueSchemaStub::from((string)argument('schema', 'low'));
 echo 'consumer run: ' . $schema->getRoutingKey() . PHP_EOL;
 
-$builder
+$consumer = $builder
     ->withInterceptors(
+        new ArgumentsVerifyInterceptor(),
         new ExactlyOnceInterceptor(createRedisClient('redis://redis:6379')),
     )
-    ->buildConsumer($schema)
-    ->consume();
+    ->buildConsumer();
+
+$consumer->consume($schema);
 
 /** @noinspection PhpUnhandledExceptionInspection */
 trapSignal([SIGTERM, SIGINT]);
+$consumer->disconnect();
 exit(0);

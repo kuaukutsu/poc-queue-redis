@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace kuaukutsu\poc\queue\redis;
 
-use kuaukutsu\queue\core\SchemaInterface;
 use Override;
+use Closure;
 use Amp\Redis\RedisConfig;
 use Amp\Redis\RedisException;
 use kuaukutsu\queue\core\handler\FactoryInterface;
@@ -24,6 +24,8 @@ final class Builder implements BuilderInterface
     private RedisConfig $config;
 
     private HandlerInterface $handler;
+
+    private ?Closure $catch = null;
 
     /**
      * @throws RedisException
@@ -45,6 +47,14 @@ final class Builder implements BuilderInterface
     }
 
     #[Override]
+    public function withCatch(Closure $catch): BuilderInterface
+    {
+        $clone = clone $this;
+        $clone->catch = $catch;
+        return $clone;
+    }
+
+    #[Override]
     public function withInterceptors(InterceptorInterface ...$interceptor): self
     {
         $clone = clone $this;
@@ -59,8 +69,8 @@ final class Builder implements BuilderInterface
     }
 
     #[Override]
-    public function buildConsumer(SchemaInterface $schema): Consumer
+    public function buildConsumer(): Consumer
     {
-        return new Consumer(createRedisClient($this->config), $schema, $this->handler, 3);
+        return new Consumer(createRedisClient($this->config), $this->handler, $this->catch, 3);
     }
 }
