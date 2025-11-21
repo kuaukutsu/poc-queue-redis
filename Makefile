@@ -87,7 +87,7 @@ publisher:
 	USER=$(USER) docker compose -f ./docker-compose.yml run --rm -u $(USER) -w /tests/simulation cli \
 		php publisher.php --schema=high
 
-worker:
+consumer:
 	USER=$(USER) docker compose -f ./docker-compose.yml run --rm -u $(USER) -w /tests/simulation cli \
 		php worker-with-exactlyonce.php --schema=high
 

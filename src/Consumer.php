@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace kuaukutsu\poc\queue\redis;
 
+use Closure;
 use Override;
 use Throwable;
 use Amp\Future;
@@ -24,35 +25,36 @@ use function Amp\async;
  */
 final readonly class Consumer implements ConsumerInterface
 {
-    private RedisList $command;
-
     /**
      * @param non-negative-int $timeoutBlocking
      */
     public function __construct(
-        RedisClient $client,
-        SchemaInterface $schema,
+        private RedisClient $client,
         private HandlerInterface $handler,
+        private ?Closure $catch = null,
         private int $timeoutBlocking = 5,
     ) {
-        $this->command = $client->getList($schema->getRoutingKey());
     }
 
     /**
-     * @param ?callable(string, Throwable): void $catch
      * @throws QueueConsumeException
      */
     #[Override]
-    public function consume(?callable $catch = null): void
+    public function consume(SchemaInterface $schema): void
     {
         EventLoop::queue(
             $this->doConsume(...),
             $this->makeFuture(...),
-            $this->command,
+            $this->client->getList($schema->getRoutingKey()),
             $this->handler,
             $this->timeoutBlocking,
-            $catch,
+            $this->catch,
         );
+    }
+
+    #[Override]
+    public function disconnect(): void
+    {
     }
 
     /**

@@ -22,10 +22,10 @@ $builder = (new Builder(new FactoryProxy(new Container())))
         RedisConfig::fromUri('tcp://redis:6379')
     );
 
-$builder
-    ->buildConsumer($schema)
-    ->consume();
+$consumer = $builder->buildConsumer();
+$consumer->consume($schema);
 
 /** @noinspection PhpUnhandledExceptionInspection */
 trapSignal([SIGTERM, SIGINT]);
+$consumer->disconnect();
 exit(0);

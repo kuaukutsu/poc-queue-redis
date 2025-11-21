@@ -18,10 +18,10 @@ require dirname(__DIR__) . '/bootstrap.php';
 $schema = QueueSchemaStub::from((string)argument('schema', 'low'));
 echo 'consumer run: ' . $schema->getRoutingKey() . PHP_EOL;
 
-$builder
-    ->buildConsumer($schema)
-    ->consume();
+$consumer = $builder->buildConsumer();
+$consumer->consume($schema);
 
 /** @noinspection PhpUnhandledExceptionInspection */
 trapSignal([SIGTERM, SIGINT]);
+$consumer->disconnect();
 exit(0);
