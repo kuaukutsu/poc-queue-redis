@@ -62,16 +62,28 @@ rector: ## rector
 ## App
 
 up: ## Run server
-	USER=$(USER) docker compose -f ./docker-compose.yml --profile serve up -d --remove-orphans
+	VERSION=$(VERSION) USER=$(USER) docker compose -f ./docker-compose.yml \
+		--profile serve \
+		up -d --remove-orphans --no-build
+
+recreate: ##
+	VERSION=$(VERSION) USER=$(USER) docker compose -f ./docker-compose.yml \
+		--profile serve \
+		up -d --remove-orphans --force-recreate
 
 stop: ## Stop server
-	docker compose -f ./docker-compose.yml --profile serve stop
+	VERSION=$(VERSION) USER=$(USER) docker compose -f ./docker-compose.yml \
+		--profile serve \
+		stop
 
 restart:
-	USER=$(USER) docker compose -f ./docker-compose.yml --profile serve restart
+	VERSION=$(VERSION) USER=$(USER) docker compose -f ./docker-compose.yml \
+		--profile serve \
+		restart
 
 down: stop
-	docker compose -f ./docker-compose.yml down --remove-orphans
+	VERSION=$(VERSION) USER=$(USER) docker compose -f ./docker-compose.yml \
+		down -v --remove-orphans
 
 build:
 	- USER=$(USER) docker compose -f ./docker-compose.yml build cli
@@ -81,19 +93,31 @@ build:
 remove: down _image_remove _container_remove _volume_remove
 
 app:
-	USER=$(USER) docker compose -f ./docker-compose.yml run --rm -u $(USER) -w /tests/simulation cli sh
+	VERSION=$(VERSION) USER=$(USER) docker compose -f ./docker-compose.yml run --rm -u $(USER) -w /tests/simulation cli sh
 
 publisher:
-	USER=$(USER) docker compose -f ./docker-compose.yml run --rm -u $(USER) -w /tests/simulation cli \
+	VERSION=$(VERSION) USER=$(USER) docker compose -f ./docker-compose.yml run --rm -u $(USER) -w /tests/simulation cli \
 		php publisher-with-error.php --schema=high
 
 consumer:
-	USER=$(USER) docker compose -f ./docker-compose.yml run --rm -u $(USER) -w /tests/simulation cli \
+	VERSION=$(VERSION) USER=$(USER) docker compose -f ./docker-compose.yml run --rm -u $(USER) -w /tests/simulation cli \
 		php worker-with-catch.php --schema=high
 
 bench: ## bench
-	USER=$(USER) docker compose -f ./docker-compose.yml run --rm -u $(USER) -w / cli \
-		./vendor/bin/phpbench run ./benchmark --report=aggregate --config=/benchmark/phpbench.json
+	USER=$(USER) docker compose -f ./docker-compose.yml run --rm -u $(USER) -w / \
+		-e XDEBUG_MODE=off \
+		cli ./vendor/bin/phpbench run ./benchmark --report=aggregate --config=/benchmark/phpbench.json
+
+bench-redis: ## bench
+	USER=$(USER) docker compose -f ./docker-compose.yml run --rm -u $(USER) -w / \
+		-e XDEBUG_MODE=off \
+		cli ./vendor/bin/phpbench run ./benchmark --report=aggregate --group=redis --config=/benchmark/phpbench.json
+
+bench-valkey: ## bench
+	USER=$(USER) docker compose -f ./docker-compose.yml run --rm -u $(USER) -w / \
+		-e XDEBUG_MODE=off \
+		cli ./vendor/bin/phpbench run ./benchmark --report=aggregate --group=valkey --config=/benchmark/phpbench.json
+
 
 _image_remove:
 	docker image rm -f \
