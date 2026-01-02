@@ -85,11 +85,11 @@ app:
 
 publisher:
 	USER=$(USER) docker compose -f ./docker-compose.yml run --rm -u $(USER) -w /tests/simulation cli \
-		php publisher.php --schema=high
+		php publisher-with-error.php --schema=high
 
 consumer:
 	USER=$(USER) docker compose -f ./docker-compose.yml run --rm -u $(USER) -w /tests/simulation cli \
-		php worker-with-exactlyonce.php --schema=high
+		php worker-with-catch.php --schema=high
 
 bench: ## bench
 	USER=$(USER) docker compose -f ./docker-compose.yml run --rm -u $(USER) -w / cli \
