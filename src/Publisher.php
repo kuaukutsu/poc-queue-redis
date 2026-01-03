@@ -28,9 +28,6 @@ final class Publisher implements PublisherInterface
         $this->map = new WeakMap();
     }
 
-    /**
-     * @throws QueuePublishException
-     */
     #[Override]
     public function push(SchemaInterface $schema, QueueTask $task, ?QueueContext $context = null): string
     {
@@ -45,13 +42,8 @@ final class Publisher implements PublisherInterface
         return $task->getUuid();
     }
 
-    /**
-     * @param list<QueueTask> $taskBatch
-     * @return list<non-empty-string>
-     * @throws QueuePublishException
-     */
     #[Override]
-    public function pushBatch(SchemaInterface $schema, array $taskBatch, ?QueueContext $context = null): array
+    public function pushBatch(SchemaInterface $schema, iterable $taskBatch, ?QueueContext $context = null): array
     {
         if ($taskBatch === []) {
             return [];
@@ -62,8 +54,13 @@ final class Publisher implements PublisherInterface
             $messageList[$task->getUuid()] = QueueMessage::makeMessage($task, $context ?? QueueContext::make($schema));
         }
 
+        $message = array_shift($messageList);
+        if ($message === null) {
+            return [];
+        }
+
         try {
-            $this->makeCommand($schema)->pushTail(array_shift($messageList), ...$messageList);
+            $this->makeCommand($schema)->pushTail($message, ...$messageList);
         } catch (Throwable $exception) {
             throw new QueuePublishException($schema, $exception);
         }
