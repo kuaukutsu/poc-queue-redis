@@ -55,10 +55,10 @@ final class Builder implements BuilderInterface
     }
 
     #[Override]
-    public function withInterceptors(InterceptorInterface ...$interceptor): self
+    public function withInterceptors(InterceptorInterface | string ...$interceptors): self
     {
         $clone = clone $this;
-        $clone->handler = $this->handler->withInterceptors(...$interceptor);
+        $clone->handler = $this->handler->withInterceptors(...$interceptors);
         return $clone;
     }
 

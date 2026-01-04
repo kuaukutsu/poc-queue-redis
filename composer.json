@@ -17,7 +17,7 @@
     "php": "^8.3",
     "ext-redis": "*",
     "amphp/redis": "^2.0",
-    "kuaukutsu/queue-core": "^0.5.2"
+    "kuaukutsu/queue-core": "^0.6"
   },
   "require-dev": {
     "ext-pcntl": "*",
@@ -61,7 +61,7 @@
     ],
     "phpcs": "vendor/bin/phpcs",
     "psalm": "vendor/bin/psalm --show-info --no-diff --no-cache",
-    "phpstan": "vendor/bin/phpstan analyze",
+    "phpstan": "vendor/bin/phpstan analyze -c phpstan.neon",
     "rector": "vendor/bin/rector"
   },
   "minimum-stability": "dev",
