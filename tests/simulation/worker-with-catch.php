@@ -3,6 +3,7 @@
 /**
  * Consumer.
  * @var Builder $builder bootstrap.php
+ * @noinspection PhpUnhandledExceptionInspection
  */
 
 declare(strict_types=1);
@@ -26,13 +27,11 @@ $consumer = $builder
         }
     )
     ->withInterceptors(
-        new TryCatchInterceptor(),
+        TryCatchInterceptor::class,
     )
     ->buildConsumer();
 
 $consumer->consume($schema);
-
-/** @noinspection PhpUnhandledExceptionInspection */
 trapSignal([SIGTERM, SIGINT]);
 $consumer->disconnect();
 exit(0);

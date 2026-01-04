@@ -97,7 +97,7 @@ app:
 
 publisher:
 	VERSION=$(VERSION) USER=$(USER) docker compose -f ./docker-compose.yml run --rm -u $(USER) -w /tests/simulation cli \
-		php publisher-with-error.php --schema=high
+		php publisher.php --schema=high
 
 consumer:
 	VERSION=$(VERSION) USER=$(USER) docker compose -f ./docker-compose.yml run --rm -u $(USER) -w /tests/simulation cli \
